@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+table.cell-table {
+  border: 2px solid;
+  border-collapse: collapse;
+}
+
+table.cell-table th,
+table.cell-table td {
+  border: 1px solid;
+  padding: 1px 1px;
+
+  max-width: 30px;
+  width: 30px;
+  height: 30px;
+
+  text-align: center;
+  vertical-align: center;
+
+  overflow: hidden;
+}
+
+table.cell-table th {
+  background-color: lightgray;
+}
+
+table.cell-table .external {
+  display: none;
+}
