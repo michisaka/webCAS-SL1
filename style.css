@@ -1,5 +1,14 @@
 @charset "UTF-8";
 
+body {
+  font-family: sans-serif;
+}
+
+main {
+  display: flex;
+  justify-content: space-around;
+}
+
 table.cell-table {
   border: 2px solid;
   border-collapse: collapse;
@@ -15,7 +24,6 @@ table.cell-table td {
   height: 30px;
 
   text-align: center;
-  vertical-align: center;
 
   overflow: hidden;
 }
@@ -24,6 +32,44 @@ table.cell-table th {
   background-color: lightgray;
 }
 
+table.cell-table th.step-num {
+  max-width: 4em;
+  width: 4em;
+}
+
 table.cell-table .external {
   display: none;
+}
+
+table.state-table,
+table.rule-table {
+  border: 2px solid;
+  border-collapse: collapse;
+}
+
+table.state-table th,
+table.rule-table th,
+table.state-table td,
+table.rule-table td {
+  border: 1px solid;
+  padding: 1px 1px;
+
+  height: 20px;
+
+  text-align: center;
+}
+
+table.state-table th,
+table.rule-table th {
+  background-color: lightgray;
+}
+
+table.state-table td.state-name,
+table.rule-table td.state-name {
+  max-width: 5em;
+  width: 5em;
+}
+
+table.rule-table td.ref-count {
+  min-width: 3em;
 }

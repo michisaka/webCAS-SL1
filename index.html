@@ -19,12 +19,47 @@
       <h1>webCAS-SL1</h1>
     </header>
     <main>
-      <table class="cell-table">
-        <thead>
-          <tr id="cell-array-header"></tr>
-        </thead>
-        <tbody id="cell-transition"></tbody>
-      </table>
+      <div class="left-column">
+        <h2>状態遷移</h2>
+        <table class="cell-table">
+          <thead>
+            <tr id="cell-array-header"></tr>
+          </thead>
+          <tbody id="cell-transition"></tbody>
+        </table>
+      </div>
+      <div class="right-column">
+        <h2>遷移規則</h2>
+        <label for="rule-file">
+          遷移規則ファイル:
+          <input type="file" id="rule-file" name="rule-file" accept=".rul" />
+        </label>
+        <h3>状態</h3>
+        <p>状態数: <span id="total-state-num"></span> (externalを除く)</p>
+        <table class="state-table">
+          <thead>
+            <tr>
+              <th>状態名</th>
+              <th>種類</th>
+            </tr>
+          </thead>
+          <tbody id="state-rows"></tbody>
+        </table>
+        <h3>遷移規則</h3>
+        <p>遷移規則数: <span id="total-rule-num"></span></p>
+        <table class="rule-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th colspan="3">遷移前</th>
+              <th></th>
+              <th>遷移後</th>
+              <!-- <th colspan="2">参照</th> -->
+            </tr>
+          </thead>
+          <tbody id="rule-rows"></tbody>
+        </table>
+      </div>
     </main>
     <footer></footer>
   </body>
