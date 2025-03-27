@@ -1,15 +1,17 @@
-import { states, rules, loadRuleFile } from "./cas.js";
+import { states, rules, loadRuleFile, searchNextState } from "./cas.js";
 
 let cellSize = 10;
+let step = 0;
 const cellTransition = document.querySelector("tbody#cell-transition");
 
-const input = document.querySelector("input#rule-file");
-input.addEventListener("change", async function (event) {
+const ruleFileInput = document.querySelector("input#rule-file");
+ruleFileInput.addEventListener("change", async function (event) {
   if (event.target.files.length === 0) {
     return;
   }
   try {
     await loadRuleFile(event.target.files[0]);
+    step = 0;
     setupStyleSheet(states);
     initializeStateTable();
     initializeRuleTable();
@@ -17,6 +19,15 @@ input.addEventListener("change", async function (event) {
   } catch (error) {
     alert(`遷移規則ファイルの読み込みに失敗しました。\n${error.message}`);
     event.target.value = null;
+  }
+});
+
+const stepButton = document.querySelector("input#step-button");
+stepButton.addEventListener("click", async function () {
+  try {
+    await stepForward();
+  } catch (error) {
+    alert(`${error.message}`);
   }
 });
 
@@ -165,7 +176,60 @@ function initializeCellArray(cellSize, generalPos = 0) {
   cellTransition.append(firstTr);
 }
 
+function stepForward() {
+  return new Promise((resolve, reject) => {
+    const external = states.find((state) => state.type === "external");
+    const externalTd = document.createElement("td");
+    externalTd.dataset.state = external.name;
+    externalTd.classList.add("external");
+
+    const currentRow = document.querySelector(`tr[data-step="${step}"]`);
+    const newRow = document.createElement("tr");
+
+    const stepTh = document.createElement("th");
+    stepTh.textContent = step + 1;
+    stepTh.classList.add("step-num");
+    newRow.append(stepTh);
+
+    newRow.append(externalTd.cloneNode());
+
+    for (let i = 1; i <= cellSize; i++) {
+      // th要素が存在するため 一つずれる
+      let left = currentRow.children[i];
+      let center = currentRow.children[i + 1];
+      let right = currentRow.children[i + 2];
+
+      let nextState, ruleNum;
+      try {
+        [nextState, ruleNum] = searchNextState(
+          left.dataset.state,
+          center.dataset.state,
+          right.dataset.state,
+        );
+      } catch (error) {
+        reject(new Error(error.message + ` step: ${step + 1}, pos: ${i}`));
+        return;
+      }
+
+      let newCell = document.createElement("td");
+      newCell.dataset.state = nextState;
+      newCell.dataset.pos = `${i},${step + 1}`;
+      newCell.textContent = nextState;
+      newCell.dataset.rule = ruleNum;
+      newRow.append(newCell);
+    }
+
+    newRow.append(externalTd.cloneNode());
+
+    step += 1;
+    newRow.dataset.step = step;
+    cellTransition.append(newRow);
+    resolve(step);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  step = 0;
   setupStyleSheet(states);
   initializeStateTable();
   initializeRuleTable();

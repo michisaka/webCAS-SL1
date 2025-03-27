@@ -1,4 +1,4 @@
-export { states, rules, loadRuleFile };
+export { states, rules, loadRuleFile, searchNextState };
 
 let states = [
   { name: "G", type: "general", bgColor: "FFFF00", fgColor: "000000" },
@@ -14,6 +14,12 @@ let rules = [
   { left: "Q", current: "Q", right: "Q", next: "Q", count: 0, totalCount: 0 },
   { left: "Q", current: "Q", right: "w", next: "Q", count: 0, totalCount: 0 },
 ];
+
+const ruleMap = new Map();
+rules.forEach((rule, index) => {
+  let currentState = `${rule.left}\0${rule.current}\0${rule.right}`;
+  ruleMap.set(currentState, index);
+});
 
 function loadRuleFile(file) {
   return new Promise((resolve, reject) => {
@@ -92,6 +98,12 @@ function readLines(lines) {
   }
   states = tempStates;
   rules = tempRules;
+
+  ruleMap.clear();
+  rules.forEach((rule, index) => {
+    let currentState = `${rule.left}\0${rule.current}\0${rule.right}`;
+    ruleMap.set(currentState, index);
+  });
 
   return;
 
@@ -181,4 +193,19 @@ function readLines(lines) {
       totalCount: 0,
     });
   }
+}
+
+function searchNextState(left, current, right) {
+  const currentState = `${left}\0${current}\0${right}`;
+
+  const index = ruleMap.get(currentState);
+  if (index === undefined) {
+    throw new Error(
+      `未定義の遷移規則が参照されました。 left: ${left}, current: ${current}, right:${right}`,
+    );
+  }
+  const rule = rules[index];
+  rule.count++;
+
+  return [rule.next, index];
 }
